@@ -1,9 +1,10 @@
-import subprocess
-import os
+from vlc import VLC
 from Constants import Constants
 
 def main():
-    p = subprocess.Popen(["", "../data/video.mp4"])
+    vlc = VLC()
+    vlc.add(Constants.TEST_FILE)
+    vlc.play()
 
 if __name__ == '__main__':
     main()
