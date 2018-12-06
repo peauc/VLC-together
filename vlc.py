@@ -1,3 +1,6 @@
+# Thanks Marios Zindilis
+# For his article and his code https://zindilis.com/blog/2016/10/23/control-vlc-with-python.html
+
 import socket
 import subprocess
 
