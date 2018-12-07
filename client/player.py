@@ -1,5 +1,4 @@
 import logging
-import sys
 from vlc import VLC
 
 class Player:

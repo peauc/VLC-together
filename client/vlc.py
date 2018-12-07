@@ -16,9 +16,9 @@ class VLC:
 # endregion
 
     def __init__(self):
-        self.SCREEN_NAME = 'vlc'
-        self.HOST = '192.168.0.138'
-        self.PORT = 8888
+        self.HOST = '127.0.0.1'
+        self.PORT = 8889
+        self.SCREEN_NAME = f'vlc{self.PORT}'
         self.__commands = [
             "pause",
             "play",
