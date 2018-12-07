@@ -1,14 +1,20 @@
+import sys
+import logging
 from vlc import VLC
-from Constants import Constants
+
+from constants import Constants
+from player import Player
+
+def setup_logging():
+    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
 def main():
-    vlc = VLC()
+    setup_logging()
+    player = Player()
 
-    vlc.add(Constants.TEST_FILE)
-    vlc.pause()
-    vlc.play()
     while 1:
-        pass
+        command = input(">")
+        player.execute_command(command)
 
 if __name__ == '__main__':
     main()
