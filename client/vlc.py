@@ -17,7 +17,7 @@ class VLC:
 
     def __init__(self):
         self.HOST = '127.0.0.1'
-        self.PORT = 8889
+        self.PORT = 8888
         self.SCREEN_NAME = f'vlc{self.PORT}'
         self.__commands = [
             "pause",
