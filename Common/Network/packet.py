@@ -13,4 +13,7 @@ class Commands(Enum):
 class Packet:
     def __init__(self):
         self.command_nb = Commands.NONE
-        self.packet_size = sys.getsizeof(Packet)
+        self.param = ''
+
+    def __str__(self):
+        return f"Command {self.command_nb} with param :\"{self.param}\""

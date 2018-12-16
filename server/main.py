@@ -3,10 +3,7 @@ from server import Server
 
 def main():
     s = Server()
-    while 1:
-        command = input('>')
-        s.send_command(command)
-
+    s.run()
 
 if __name__ == '__main__':
     main()
