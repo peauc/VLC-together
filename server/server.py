@@ -1,11 +1,11 @@
 from constants import Constants
 import socket
+from Common.Network.packet import Packet
 
 
-class Network:
+class Server:
     def __init__(self):
         self.__sockets = []
-        self.connect_to_default_ip()
 
     def connect_to_default_ip(self):
         for ip, port in Constants.IP_TO_CONNECT_TO:
@@ -13,7 +13,7 @@ class Network:
             sock.connect((ip, port))
             sock.sendall(bytes('add ../media/video.mp4'+'\n', 'utf-8'))
             self.__sockets.append(sock)
-            #sock.sendall(bytes('stop' + '\n', 'utf-8'))
+            # sock.sendall(bytes('stop' + '\n', 'utf-8'))
 
     def send_command(self, command: str):
         for sock in self.__sockets:

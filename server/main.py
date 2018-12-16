@@ -1,8 +1,8 @@
-from network import Network
+from server import Server
 
 
 def main():
-    s = Network()
+    s = Server()
     while 1:
         command = input('>')
         s.send_command(command)
