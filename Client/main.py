@@ -16,8 +16,9 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect(('localhost', 8080))
         pack = Packet()
-        pack.param = "Hello as tu pensé a a aller niquer ta emre "
+        pack.param = "test"
         pack.command_nb = Commands.JOIN
+        s.sendall(pickle.dumps(pack))
         s.sendall(pickle.dumps(pack))
         time.sleep(1)
 
