@@ -1,16 +1,16 @@
-import sys
+from Server.server import Server
 import logging
+import sys
 
-from player import Player
 
-
-def setup_logging():
+def set_log():
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
 
 def main():
-    setup_logging()
-    player = Player()
+    set_log()
+    s = Server()
+    s.run()
 
 
 if __name__ == '__main__':
