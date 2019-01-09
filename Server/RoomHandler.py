@@ -13,3 +13,14 @@ class RoomHandler:
                 self.__rooms[room_name] = Room(room_name, password)
             self.__rooms[room_name].add_user(user, password)
 
+    def is_user_in_room(self, user: User) -> bool:
+        for room in self.__rooms:
+            if room.has_user(user):
+                return True
+        return False
+
+    def get_room_from_user(self, user: User) -> Room or None:
+        for room in self.__rooms:
+            if room.has_user(user):
+                return room
+        return None

@@ -12,8 +12,11 @@ class Room:
         if not validate_password(self.__password, password):
             return
         self.__users.append(user)
-        self.__send_message_to_every_users(f"{user.sock.getpeername()} joined the room")
+        self.send_packet_to_users(f"{user.sock.getpeername()} joined the room")
 
-    def __send_message_to_every_users(self, param):
+    def send_packet_to_users(self, message):
         for user in self.__users:
-            user.add_to_output_queue(param)
+            user.add_to_output_queue(message)
+
+    def has_user(self, user: User):
+        return user in self.__users

@@ -1,4 +1,3 @@
 class Constants:
-   IP_TO_CONNECT_TO = [
-       ('127.0.0.1', 8888),
-    ]
+    IP = 'localhost'
+    PORT = 8080

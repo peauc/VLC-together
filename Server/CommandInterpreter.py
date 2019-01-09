@@ -14,7 +14,8 @@ class CommandInterpreter:
     def __init__(self):
         self.__room_handler = RoomHandler()
         self.__command_list = {
-            Commands.JOIN: self._join
+            Commands.JOIN: self._join,
+            Commands.VLC_COMMAND: self._vlc_command
         }
 
     @property
@@ -26,6 +27,13 @@ class CommandInterpreter:
         if len(splited_param) < 1 or len(splited_param) > 2:
             return CommandResponse.PARAM_ERROR, "join parameters error\njoin room_name [room_password]\n"
         self.__room_handler.add_user_to_room(user, *splited_param)
+        return CommandResponse.OK, ""
+
+    def _vlc_command(self, user: User, packet_string: str):
+        room = self.__room_handler.get_room_from_user(user)
+        if room is not None:
+            packet = Packet(Commands.VLC_COMMAND, packet_string)
+            room.send_packet_to_users(packet)
         return CommandResponse.OK, ""
 
     """
