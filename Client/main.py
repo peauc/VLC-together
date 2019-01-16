@@ -30,7 +30,7 @@ def main():
         packets = ci.parse_and_execute_commands()
         if packets:
             for packet in packets:
-                server.add_to_output_queue(pickle.dumps(packet))
+                server.add_to_output_queue(packet)
         out = []
 
         if len(server.output_queue) > 0:
@@ -48,10 +48,9 @@ def main():
         for item in w:
             logging.debug(f"sending {len(item.output_queue)} packets to host")
             for packet in item.output_queue:
-                logging.debug(f"sending {packet}")
-
-                item.socket.sendall(pickle.dumps(packet))
-                time.sleep(0.5)
+                print(packet)
+                logging.debug(f"sending {packet} to {item.socket.getpeername()}")
+                item.socket.send(pickle.dumps(packet))
             item.output_queue.clear()
         # TODO: Add the exceptionnal case
 

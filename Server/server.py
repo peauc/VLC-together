@@ -1,3 +1,4 @@
+import logging
 import socket, select, sys, queue
 from Server.CommandInterpreter import CommandInterpreter
 from Common.Network.packet import Packet
@@ -63,5 +64,8 @@ class Server:
                 user.close()
 
     def handle_packets(self, user: User, packet : Packet):
-        self.__command_interpreter.interpret_command(user, packet)
+        try:
+            self.__command_interpreter.interpret_command(user, packet)
+        except AttributeError as e:
+            logging.error(f"Recevied a corrupted packet from {user.sock.getpeername()}")
 
