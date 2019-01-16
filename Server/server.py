@@ -22,9 +22,8 @@ class Server:
     def poll_server(self, s: socket.socket):
         connection, client_address = s.accept()
         print(f'New connection from {client_address}')
-        connection.setblocking(0)
+        connection.setblocking(False)
         self.__current_users.append(User(connection))
-        self.__message_queue[connection] = queue.Queue()
 
     def run(self):
         while 1:
@@ -42,12 +41,11 @@ class Server:
                         print(f'Received a packet {packet}')
                         self.handle_packets(user, packet)
                     else:
-                        print(f"Closing {user.getsockname()}")
+                        print(f"Closing {user.sock.getsockname()}")
                         if user in self.__output:
                             self.__output.remove(user)
                         self.__current_users = [f for f in self.__current_users if user != f]
                         user.sock.close()
-                        del self.__message_queue[user]
             for user in writable:
                 try:
                     next_message = self.__message_queue[user].get_nowait()
@@ -63,7 +61,6 @@ class Server:
                 if user in self.__output:
                     self.__output.remove(user)
                 user.close()
-                del self.__message_queue[user]
 
     def handle_packets(self, user: User, packet : Packet):
         self.__command_interpreter.interpret_command(user, packet)

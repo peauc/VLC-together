@@ -1,4 +1,3 @@
-from threading import Lock
 import logging
 from Client import TerminalAsyncReader
 from Common.Network.packet import Packet, Commands

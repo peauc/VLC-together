@@ -1,10 +1,10 @@
+import time
 import sys
 import logging
-import socket
+import select
 import pickle
-import time
 from Client.CommandInterpreter import CommandInterpreter
-from Common.Network.packet import Packet, Commands
+from Client.ServerConnection import ServerConnection
 
 
 def setup_logging():
@@ -20,19 +20,40 @@ def get_connection_infos():
 def main():
     setup_logging()
     # ip, port = get_connection_infos()
-    # TODO: Remove temporary placeholder
+    # TODO: Remove testing placeholder
     ip = 'localhost'
 
     port = 8080
+    server = ServerConnection(ip, port)
     ci = CommandInterpreter()
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((ip, port))
     while 1:
         packets = ci.parse_and_execute_commands()
         if packets:
             for packet in packets:
-                print(packet)
-                sock.sendall(pickle.dumps(packet))
+                server.add_to_output_queue(pickle.dumps(packet))
+        out = []
+
+        if len(server.output_queue) > 0:
+            out.append(server)
+
+        r, w, e = select.select([server], out, [server], 1)
+
+        for item in r:
+            data = item.socket.recv(1048)
+            if data:
+                logging.debug(f'received \"{data}\" from {item.socket.getpeername()}')
+                packet = pickle.loads(data)
+                logging.debug(f'Received a packet {packet}')
+
+        for item in w:
+            logging.debug(f"sending {len(item.output_queue)} packets to host")
+            for packet in item.output_queue:
+                logging.debug(f"sending {packet}")
+
+                item.socket.sendall(pickle.dumps(packet))
+                time.sleep(0.5)
+            item.output_queue.clear()
+        # TODO: Add the exceptionnal case
 
 
 if __name__ == '__main__':
