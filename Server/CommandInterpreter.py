@@ -27,6 +27,8 @@ class CommandInterpreter:
         if len(splited_param) < 1 or len(splited_param) > 2:
             return CommandResponse.PARAM_ERROR, "join parameters error\njoin room_name [room_password]\n"
         self.__room_handler.add_user_to_room(user, *splited_param)
+        # Maybe add a nickname for users
+        user.add_to_output_queue(Packet(Commands.SERVER_INFO, f"A new user {user.sock.getpeername()} has joined"))
         return CommandResponse.OK, ""
 
     def _vlc_command(self, user: User, packet_string: str):

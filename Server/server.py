@@ -47,12 +47,13 @@ class Server:
 
             for user in writable:
                 for message in user.output_queue:
-                    logging.log(f"sending {message} to {user.sock.getpeername()}")
-                    user.sock.send(message)
+                    logging.info(f"sending {message} to {user.sock.getpeername()}")
+                    user.sock.send(pickle.dumps(message))
+                user.output_queue.clear()
 
             for user in exceptionnal:
                 logging.error(f"handling exceptionnal conditions for {user.sock.getpeername()}")
-                self.__current_users = [f for f in self.__current_users if user != f.sock]
+                self.__current_users = [f for f in self.__current_users if user != f]
                 if user in output_sockets:
                     output_sockets.remove(user)
                 user.close()
@@ -71,7 +72,7 @@ class Server:
         return users
 
     def __remove_user(self, user):
-        print(f"Closing {user.sock.getsockname()}")
+        logging.info(f"Closing {user.sock.getsockname()}")
         self.__current_users = [f for f in self.__current_users if user != f]
         self.__command_interpreter.remove_user_trace(user)
         user.sock.close()

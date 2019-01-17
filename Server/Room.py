@@ -12,7 +12,6 @@ class Room:
         if not validate_password(self.__password, password):
             return
         self.__users.append(user)
-        self.send_packet_to_users(f"{user.sock.getpeername()} joined the room")
 
     def remove_user(self, user: User):
         self.__users.remove(user)

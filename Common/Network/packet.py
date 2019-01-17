@@ -7,6 +7,7 @@ class Commands(Enum):
     JOIN = 0
     QUIT = 1
     VLC_COMMAND = 2
+    SERVER_INFO = 3
 
 
 class Packet:
