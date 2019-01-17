@@ -14,6 +14,9 @@ class Room:
         self.__users.append(user)
         self.send_packet_to_users(f"{user.sock.getpeername()} joined the room")
 
+    def remove_user(self, user: User):
+        self.__users.remove(user)
+
     def send_packet_to_users(self, message):
         for user in self.__users:
             user.add_to_output_queue(message)

@@ -36,10 +36,11 @@ class CommandInterpreter:
             room.send_packet_to_users(packet)
         return CommandResponse.OK, ""
 
-    """
-        Each command must return a pair composed of a CommandResponse and a string
-        If not additional information is required, the string will be empty 
-    """
+    def remove_user_trace(self, user: User):
+        room = self.__room_handler.get_room_from_user(user)
+        if room is not None:
+            self.__room_handler.remove_user_from_room(user, room)
+
     def interpret_command(self, user: User, packet: Packet):
         if packet.command_nb in Commands:
             response, info = self.__command_list[packet.command_nb](user, packet.param)
