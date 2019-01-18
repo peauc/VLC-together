@@ -48,10 +48,13 @@ class VLC:
                 '--rc-host',
                 '%s:%s' % (self.HOST, self.PORT)
             ])
+        self.SOCK = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.SOCK.connect((self.HOST, self.PORT))
         logging.debug(f"Listening on HOST:{self.HOST} PORT:{self.PORT} {os.linesep}")
 
     def x(self, cmd):
         '''Prepare a command and send it to VLC'''
+        logging.debug(f'Sending {cmd} to vlc')
         if not cmd.endswith('\n'):
             cmd = cmd + '\n'
         cmd = cmd.encode()

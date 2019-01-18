@@ -3,7 +3,7 @@ from Client import TerminalAsyncReader
 from Common.Network.packet import Packet, Commands
 
 
-class CommandInterpreter:
+class UserInputHandler:
     def __init__(self):
         self.__reader = TerminalAsyncReader.TerminalAsyncReader()
         self.__reader.start()

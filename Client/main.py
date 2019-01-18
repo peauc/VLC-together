@@ -1,9 +1,12 @@
+import os
 import sys
 import logging
 import select
 import pickle
-from Client.CommandInterpreter import CommandInterpreter
+from Client.UserInputHandler import UserInputHandler
 from Client.ServerConnection import ServerConnection
+from Client.vlc import VLC
+from Common.Network.packet import Commands
 
 
 def setup_logging():
@@ -23,8 +26,10 @@ def main():
     ip = 'localhost'
 
     port = 8080
+    vlc = VLC()
     server = ServerConnection(ip, port)
-    ci = CommandInterpreter()
+    ci = UserInputHandler()
+    print(os.getcwd())
     while 1:
         packets = ci.parse_and_execute_commands()
         if packets:
@@ -43,6 +48,10 @@ def main():
                 logging.debug(f'received \"{data}\" from {item.socket.getpeername()}')
                 packet = pickle.loads(data)
                 logging.debug(f'Received a packet {packet}')
+                if packet.command_nb == Commands.VLC_COMMAND:
+                    vlc.x(packet.param)
+                else:
+                    print(packet.param)
 
         for item in w:
             logging.debug(f"sending {len(item.output_queue)} packets to host")

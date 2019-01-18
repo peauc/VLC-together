@@ -39,6 +39,7 @@ class Server:
                     data = user.sock.recv(1048)
                     if data:
                         packet = pickle.loads(data)
+                        print(packet)
                         self.handle_packets(user, packet)
                     # If the select wake up and read on this socket but has no data,
                     # it means the connection is getting closed
