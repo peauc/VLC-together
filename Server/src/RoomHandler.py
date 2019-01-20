@@ -7,6 +7,9 @@ class RoomHandler:
     def __init__(self):
         self.__rooms = {}
 
+    def __len__(self):
+        return len(self.__rooms)
+
     def add_user_to_room(self, user: User, room_name: str, password=""):
             if room_name not in self.__rooms:
                 logging.debug(f"Added user {user.sock.getpeername()} to room {room_name}")
