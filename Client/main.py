@@ -28,15 +28,15 @@ def main():
     port = 8080
     vlc = VLC()
     server = ServerConnection(ip, port)
-    ci = UserInputHandler()
-    print(os.getcwd())
+    uih = UserInputHandler()
     while 1:
-        packets = ci.parse_and_execute_commands()
+        packets = uih.poll_and_consume_packets()
         if packets:
             for packet in packets:
                 server.add_to_output_queue(packet)
         out = []
 
+        # If the server need to send back information we append his socket to the list so it can be polled by select
         if len(server.output_queue) > 0:
             out.append(server)
 
@@ -58,9 +58,15 @@ def main():
             for packet in item.output_queue:
                 print(packet)
                 logging.debug(f"sending {packet} to {item.socket.getpeername()}")
-                item.socket.send(pickle.dumps(packet))
+                serialized_data = pickle.dumps(packet)
+                item.socket.send(serialized_data)
             item.output_queue.clear()
-        # TODO: Add the exceptionnal case
+
+        for item in e:
+            logging.error(f"handling exceptionnal conditions for {item.sock.getpeername()}")
+            item.close()
+            logging.error(f"Connection to remote host was closed")
+            exit(1)
 
 
 if __name__ == '__main__':
