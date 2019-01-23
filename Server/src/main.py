@@ -1,4 +1,4 @@
-from Server.server import Server
+from Server.src.server import Server
 import logging
 import sys
 
