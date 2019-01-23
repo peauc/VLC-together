@@ -23,7 +23,7 @@ def main():
     setup_logging()
     # ip, port = get_connection_infos()
     # TODO: Remove testing placeholder
-    ip = 'localhost'
+    ip = '127.0.0.1'
 
     port = 8080
     vlc = VLC()

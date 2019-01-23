@@ -20,6 +20,7 @@ class Server:
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setblocking(False)
         server.bind((Constants.IP, Constants.PORT))
+        logging.debug(f"Listening on {Constants.IP}:{Constants.PORT}")
         server.listen(5)
         return server
 
