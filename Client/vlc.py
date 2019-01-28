@@ -16,29 +16,17 @@ class VLC:
 # endregion
 
     def __init__(self):
-        self.HOST = '127.0.0.1'
+        self.HOST = 'localhost'
         self.PORT = 8888
         self.SCREEN_NAME = f'vlc{self.PORT}'
-        self.__commands = [
-            "pause",
-            "play",
-            "stop",
-            "prev",
-            "next",
-            "add",
-            "enqueue",
-            "clear",
-            "shutdown",
-        ]
 
         cmd = subprocess.run(
             ['screen', '-ls', self.SCREEN_NAME,],
             stdout=subprocess.DEVNULL
         )
-        logging.debug("subprocess screen is running")
         if cmd.returncode:
-            logging.debug("subprocess vlc is runing")
-            subprocess.run([
+            logging.debug(f"screen is running return code {cmd.returncode}")
+            cmd = subprocess.run([
                 'screen',
                 '-dmS',
                 self.SCREEN_NAME,
@@ -48,10 +36,15 @@ class VLC:
                 '--rc-host',
                 '%s:%s' % (self.HOST, self.PORT)
             ])
-        logging.debug(f"Listening on HOST:{self.HOST} PORT:{self.PORT} {os.linesep}")
+            logging.debug(f"VLC is running, return code {cmd.returncode}")
+        logging.debug(f"VLC is listening on HOST:{self.HOST} PORT:{self.PORT} {os.linesep}")
+        self.SOCK = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.SOCK.connect((self.HOST, self.PORT))
+        logging.debug(f"Connection successful to {self.HOST}:{self.PORT}")
 
     def x(self, cmd):
         '''Prepare a command and send it to VLC'''
+        logging.debug(f'Sending {cmd} to vlc')
         if not cmd.endswith('\n'):
             cmd = cmd + '\n'
         cmd = cmd.encode()
