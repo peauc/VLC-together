@@ -261,3 +261,6 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 .idea/*
+
+# Protobuff compiled classes
+Common/Network/Protobuff/Generated/*
