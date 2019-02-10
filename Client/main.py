@@ -47,7 +47,7 @@ def main():
                 packet = packet_pb2.defaultPacket()
                 packet.ParseFromString(data)
                 logging.debug(f'Received a packet {packet}')
-                if packet.command == packet_pb2.Commands.VLC_COMMAND:
+                if packet.command == packet_pb2.defaultPacket.VLC_COMMAND:
                     vlc.x(packet.param)
                 else:
                     print(packet.param)

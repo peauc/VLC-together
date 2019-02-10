@@ -45,7 +45,9 @@ class CommandInterpreter:
             self.__room_handler.remove_user_from_room(user, room)
 
     def interpret_command(self, user: User, packet: packet_pb2.defaultPacket):
-        if packet.command in packet_pb2.defaultPacket.Commands:
+        descriptor = packet_pb2.defaultPacket.Commands.DESCRIPTOR
+
+        if packet.command in descriptor.values_by_number:
             response, info = self.__command_list[packet.command](user, packet.param)
             if response == CommandResponse.PARAM_ERROR:
                 message = network_utils.create_packet(packet_pb2.defaultPacket.ERROR, info)

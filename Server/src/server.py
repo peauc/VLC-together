@@ -9,6 +9,7 @@ from Server.src.User import User
 
 class Server:
 
+# TODO: Verify that the protobuff has been made
     def __init__(self):
         self.__current_users = []
         self.__message_queue = {}

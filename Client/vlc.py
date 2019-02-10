@@ -5,15 +5,10 @@ import logging
 import socket
 import subprocess
 import os
+import platform
 
 
 class VLC:
-
-    # region Properties
-    @property
-    def commands(self):
-        return self.__commands
-# endregion
 
     def __init__(self):
         self.HOST = 'localhost'
@@ -24,14 +19,15 @@ class VLC:
             ['screen', '-ls', self.SCREEN_NAME,],
             stdout=subprocess.DEVNULL
         )
+        # For now its either osx or linux
+        platform_path = 'vlc' if platform.platform() == 'Linux' else '/Applications/VLC.app/Contents/MacOS/VLC'
         if cmd.returncode:
             logging.debug(f"screen is running return code {cmd.returncode}")
             cmd = subprocess.run([
                 'screen',
                 '-dmS',
                 self.SCREEN_NAME,
-#                'vlc'
-                '/Applications/VLC.app/Contents/MacOS/VLC',
+                platform_path,
                 '-I',
                 'rc',
                 '--rc-host',
