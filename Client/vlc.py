@@ -30,7 +30,8 @@ class VLC:
                 'screen',
                 '-dmS',
                 self.SCREEN_NAME,
-                'vlc',
+#                'vlc'
+                '/Applications/VLC.app/Contents/MacOS/VLC',
                 '-I',
                 'rc',
                 '--rc-host',

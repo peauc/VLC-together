@@ -2,16 +2,15 @@ syntax = "proto3";
 
 package vlcTogether;
 
-enum Commands {
-    ERROR = 0;
-    JOIN = 1;
-    QUIT = 2;
-    VLC_COMMAND = 3;
-    SERVER_INFO = 4;
-}
-
 message defaultPacket {
     Commands command = 1;
     string param = 2;
+    enum Commands {
+        ERROR = 0;
+        JOIN = 1;
+        QUIT = 2;
+        VLC_COMMAND = 3;
+        SERVER_INFO = 4;
+    }
 }
 

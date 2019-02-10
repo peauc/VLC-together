@@ -1,12 +1,10 @@
-import os
 import sys
 import logging
 import select
-import pickle
+import Common.Network.Protobuff.Generated.packet_pb2 as packet_pb2
 from Client.UserInputHandler import UserInputHandler
 from Client.ServerConnection import ServerConnection
 from Client.vlc import VLC
-from Common.Network.packet import Commands
 
 
 def setup_logging():
@@ -46,9 +44,10 @@ def main():
             data = item.socket.recv(1048)
             if data:
                 logging.debug(f'received \"{data}\" from {item.socket.getpeername()}')
-                packet = pickle.loads(data)
+                packet = packet_pb2.defaultPacket()
+                packet.ParseFromString(data)
                 logging.debug(f'Received a packet {packet}')
-                if packet.command_nb == Commands.VLC_COMMAND:
+                if packet.command == packet_pb2.Commands.VLC_COMMAND:
                     vlc.x(packet.param)
                 else:
                     print(packet.param)
@@ -58,7 +57,7 @@ def main():
             for packet in item.output_queue:
                 print(packet)
                 logging.debug(f"sending {packet} to {item.socket.getpeername()}")
-                serialized_data = pickle.dumps(packet)
+                serialized_data = packet.SerializeToString()
                 item.socket.send(serialized_data)
             item.output_queue.clear()
 

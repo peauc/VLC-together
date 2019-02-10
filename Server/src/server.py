@@ -1,10 +1,10 @@
+import Common.Network.Protobuff.Generated.packet_pb2 as packet_pb2
 import logging
 import socket, select
 from Server.src.CommandInterpreter import CommandInterpreter
 from Common.Network.packet import Packet
 from Server.src.constants import Constants
 from Server.src.User import User
-import pickle
 
 
 class Server:
@@ -43,14 +43,18 @@ class Server:
                 else:
                     data = user.sock.recv(1048)
                     if data:
-                        self.handle_packets(user, pickle.loads(data))
+                        packet = packet_pb2.defaultPacket()
+                        packet.ParseFromString(data)
+                        self.handle_packets(user, packet)
                     else:
                         self.__remove_user(user)
 
             for user in writable:
                 for message in user.output_queue:
                     logging.info(f"sending {message} to {user.sock.getpeername()}")
-                    user.sock.send(pickle.dumps(message))
+                    out_packet = packet_pb2.defaultPacket()
+                    serialized_packet = out_packet.SerializeToString(message)
+                    user.sock.send(serialized_packet)
                 user.output_queue.clear()
 
             for user in exceptional:
