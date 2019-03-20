@@ -22,13 +22,11 @@ def get_connection_infos():
 def main():
     setup_logging()
     logging.debug(f"Current directory {os.getcwd()}")
-    #TODO: If the informations are in the constant file. Do not prompt
-    #ip, port = get_connection_infos()
     vlc = VLC()
-    vlc.x('shutdown')
-    time.sleep(10)
-    return (0)
+    #TODO: If the informations are in the constant file. Do not prompt
+    ip, port = get_connection_infos()
     server = ServerConnection(ip, port)
+    slist = [server]
     uih = UserInputHandler()
     # TODO: Give the client a way to quit gracefully
     while uih.should_run():
@@ -40,16 +38,14 @@ def main():
 
         # If the server need to send back information we append his socket to the list so it can be polled by select
         if len(server.output_queue) > 0:
-            out.append(server)
-
-        r, w, e = select.select([server], out, [server], 1)
+            out = slist
+        r, w, e = select.select(slist, out, slist, 1)
 
         for item in r:
             data = item.socket.recv(1048)
             if data:
                 packet = packet_pb2.defaultPacket()
                 packet.ParseFromString(data)
-                logging.debug(f'Received a packet {packet}')
                 if packet.command == packet_pb2.defaultPacket.VLC_COMMAND:
                     vlc.x(packet.param)
                 else:

@@ -28,7 +28,8 @@ class Server:
         connection, client_address = s.accept()
         print(f'New connection from {client_address}')
         connection.setblocking(False)
-        self.__current_users.append(User(connection))
+        new_user = User(connection)
+        self.__current_users.append(new_user)
 
     # TODO: We have to find a way to close client's connection and remove it from the client list
     def run(self):
@@ -52,8 +53,7 @@ class Server:
 
             for user in writable:
                 for message in user.output_queue:
-                    out_packet = packet_pb2.defaultPacket()
-                    serialized_packet = out_packet.SerializeToString(message)
+                    serialized_packet = message.SerializeToString()
                     user.sock.send(serialized_packet)
                 user.output_queue.clear()
 
@@ -65,7 +65,7 @@ class Server:
         try:
             self.__command_interpreter.interpret_command(user, packet)
         except AttributeError:
-            logging.error(f"Recevied a corrupted packet from {user.sock.getpeername()}")
+            logging.error(f"Received a corrupted packet from {user.sock.getpeername()}")
 
     def __get_users_with_data_ready(self) -> [User]:
         users = []

@@ -33,7 +33,7 @@ class CommandInterpreter:
         if len(split_param) < 1 or len(split_param) > 2:
             return CommandResponse.PARAM_ERROR, "join parameters error\njoin room_name [room_password]\n"
         self.__room_handler.add_user_to_room(user, *split_param)
-        # Maybe add a nickname for users
+        #TODO: Maybe add a nickname for users
         room_message = network_utils.create_packet(packet_pb2.defaultPacket.SERVER_INFO, f"A new user {user.sock.getpeername()} has joined")
         user.add_to_output_queue(room_message)
         # The room name is guarenteed

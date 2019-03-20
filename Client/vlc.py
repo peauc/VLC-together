@@ -5,6 +5,7 @@ import logging
 import socket
 import subprocess
 import os
+import time
 import platform
 
 
@@ -13,8 +14,9 @@ class VLC:
     def __init__(self):
         self.HOST = 'localhost'
         self.PORT = 8888
-        self.SCREEN_NAME = 'vlc'
-        binary_name = 'vlc' if platform.platform() == 'Linux' else '/Applications/VLC.app/Contents/MacOS/VLC'
+        self.SCREEN_NAME = f'vlc{self.PORT}'
+        binary_name = 'vlc' if platform.platform() != 'Darwin' else '/Applications/VLC.app/Contents/MacOS/VLC'
+        logging.debug(binary_name)
         # This will check if a screen with name self.SCREEN_NAME is running
         cmd = subprocess.run(
             ['screen', '-ls', self.SCREEN_NAME, ],
@@ -36,6 +38,7 @@ class VLC:
                 '%s:%s' % (self.HOST, self.PORT)
             ])
         try:
+            time.sleep(1)
             self.SOCK = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.SOCK.connect((self.HOST, self.PORT))
         except ConnectionRefusedError as e:
@@ -45,7 +48,7 @@ class VLC:
 
     def x(self, cmd):
         '''Prepare a command and send it to VLC'''
-        logging.debug(f'Sending {cmd} to vlc')
+        logging.debug(f'user: {cmd}')
         if not cmd.endswith('\n'):
             cmd = cmd + '\n'
         cmd = cmd.encode()
