@@ -2,7 +2,6 @@ import Common.Network.Protobuff.Generated.packet_pb2 as packet_pb2
 import logging
 import socket, select
 from Server.src.CommandInterpreter import CommandInterpreter
-from Common.Network.packet import Packet
 from Server.src.constants import Constants
 from Server.src.User import User
 
@@ -31,6 +30,7 @@ class Server:
         connection.setblocking(False)
         self.__current_users.append(User(connection))
 
+    # TODO: We have to find a way to close client's connection and remove it from the client list
     def run(self):
         while self.__should_run:
             input_sockets = self.__current_users + [self.__server]
@@ -52,7 +52,6 @@ class Server:
 
             for user in writable:
                 for message in user.output_queue:
-                    logging.info(f"sending {message} to {user.sock.getpeername()}")
                     out_packet = packet_pb2.defaultPacket()
                     serialized_packet = out_packet.SerializeToString(message)
                     user.sock.send(serialized_packet)
@@ -62,7 +61,7 @@ class Server:
                 logging.error(f"handling exceptional conditions for {user.sock.getpeername()}")
                 self.__remove_user(user)
 
-    def handle_packets(self, user: User, packet: Packet):
+    def handle_packets(self, user: User, packet: packet_pb2.defaultPacket):
         try:
             self.__command_interpreter.interpret_command(user, packet)
         except AttributeError:

@@ -8,6 +8,9 @@ class Room:
         self.__password = password
         self.__users = []
 
+    def __str__(self):
+        return self.__name
+
     def add_user(self, user: User, password : str):
         if not validate_password(self.__password, password):
             return

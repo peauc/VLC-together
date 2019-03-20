@@ -1,6 +1,8 @@
 import sys
 import logging
 import select
+import os
+import time
 import Common.Network.Protobuff.Generated.packet_pb2 as packet_pb2
 from Client.UserInputHandler import UserInputHandler
 from Client.ServerConnection import ServerConnection
@@ -12,22 +14,24 @@ def setup_logging():
 
 
 def get_connection_infos():
-    ip = input("Please input connection Ip")
-    port = input("Please enter connection port")
+    ip = input("Server IP:")
+    port = int(input("Port:"))
     return ip, port
 
 
 def main():
     setup_logging()
-    # ip, port = get_connection_infos()
-    # TODO: Remove testing placeholder
-    ip = '127.0.0.1'
-
-    port = 8080
+    logging.debug(f"Current directory {os.getcwd()}")
+    #TODO: If the informations are in the constant file. Do not prompt
+    #ip, port = get_connection_infos()
     vlc = VLC()
+    vlc.x('shutdown')
+    time.sleep(10)
+    return (0)
     server = ServerConnection(ip, port)
     uih = UserInputHandler()
-    while 1:
+    # TODO: Give the client a way to quit gracefully
+    while uih.should_run():
         packets = uih.poll_and_consume_packets()
         if packets:
             for packet in packets:
@@ -43,7 +47,6 @@ def main():
         for item in r:
             data = item.socket.recv(1048)
             if data:
-                logging.debug(f'received \"{data}\" from {item.socket.getpeername()}')
                 packet = packet_pb2.defaultPacket()
                 packet.ParseFromString(data)
                 logging.debug(f'Received a packet {packet}')
@@ -51,12 +54,11 @@ def main():
                     vlc.x(packet.param)
                 else:
                     print(packet.param)
+            else:
+                logging.debug(f"0 byte read")
 
         for item in w:
-            logging.debug(f"sending {len(item.output_queue)} packets to host")
             for packet in item.output_queue:
-                print(packet)
-                logging.debug(f"sending {packet} to {item.socket.getpeername()}")
                 serialized_data = packet.SerializeToString()
                 item.socket.send(serialized_data)
             item.output_queue.clear()

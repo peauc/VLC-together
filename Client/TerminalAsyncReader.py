@@ -1,4 +1,3 @@
-import fileinput
 import sys
 from threading import Thread, Lock
 
@@ -16,9 +15,13 @@ class TerminalAsyncReader(Thread):
         super(TerminalAsyncReader, self).__init__()
         self._lock = Lock()
         self._command_queue = []
+        self.__should_run = True
+
+    def stop(self):
+        self.__should_run = False
 
     def run(self):
-        while 1:
+        while self.__should_run:
             array = [l for l in sys.stdin.read().splitlines() if l]
             if array:
                 with self._lock:
