@@ -44,7 +44,7 @@ class VLC:
         except ConnectionRefusedError as e:
             logging.error(f"Connection failed to VLC's socket\n{e}")
             exit(1)
-        logging.debug(f"Connection successful to {self.HOST}:{self.PORT}")
+        logging.debug(f"Connection successful to vlc on {self.HOST}:{self.PORT}")
 
     def x(self, cmd):
         '''Prepare a command and send it to VLC'''

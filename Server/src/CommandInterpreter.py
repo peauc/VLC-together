@@ -9,6 +9,7 @@ from enum import Enum
 class CommandResponse(Enum):
     PARAM_ERROR = -1
     OK = 0
+    SESSION_CLOSED = 1
 
 
 class CommandInterpreter:
@@ -49,7 +50,7 @@ class CommandInterpreter:
         logging.debug(f"user {user} is leaving")
         user.output_queue.clear()
         user.sock.close()
-        return CommandResponse.OK, "Session closed"
+        return CommandResponse.SESSION_CLOSED, "Session closed"
 
     def _vlc_command(self, user: User, packet_string: str):
         room = self.__room_handler.get_room_from_user(user)
@@ -72,3 +73,5 @@ class CommandInterpreter:
             if response == CommandResponse.PARAM_ERROR:
                 message = network_utils.create_packet(packet_pb2.defaultPacket.ERROR, info)
                 user.add_to_output_queue(message)
+            return response
+        return CommandResponse.PARAM_ERROR

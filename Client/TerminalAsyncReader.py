@@ -4,6 +4,10 @@ from threading import Thread, Lock
 
 class TerminalAsyncReader(Thread):
     @property
+    def is_running(self):
+        return self.__should_run
+
+    @property
     def lock(self):
         return self._lock
 

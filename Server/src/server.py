@@ -1,7 +1,7 @@
 import Common.Network.Protobuff.Generated.packet_pb2 as packet_pb2
 import logging
 import socket, select
-from Server.src.CommandInterpreter import CommandInterpreter
+from Server.src.CommandInterpreter import CommandInterpreter, CommandResponse
 from Server.src.constants import Constants
 from Server.src.User import User
 
@@ -63,7 +63,9 @@ class Server:
 
     def handle_packets(self, user: User, packet: packet_pb2.defaultPacket):
         try:
-            self.__command_interpreter.interpret_command(user, packet)
+            resp = self.__command_interpreter.interpret_command(user, packet)
+            if resp == CommandResponse.SESSION_CLOSED:
+                self.__remove_user(user)
         except AttributeError:
             logging.error(f"Received a corrupted packet from {user.sock.getpeername()}")
 
@@ -75,9 +77,7 @@ class Server:
         return users
 
     def __remove_user(self, user):
-        logging.info(f"Closing {user.sock.getsockname()}")
         self.__current_users = [f for f in self.__current_users if user != f]
-        self.__command_interpreter.remove_user_trace(user)
         user.sock.close()
 
         # We clear the client's output queue without looking if there still is information inside

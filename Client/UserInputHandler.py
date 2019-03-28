@@ -84,5 +84,5 @@ class UserInputHandler(object):
         return packet
 
     def should_run(self) -> bool:
-        return self.__reader.is_alive()
+        return self.__reader.is_running
 

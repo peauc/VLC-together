@@ -12,10 +12,17 @@ from Client.vlc import VLC
 def setup_logging():
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
+def ask_for_port() -> int:
+    try:
+        port = int(input("Port:"))
+    except ValueError:
+        print('The port should be a number')
+        return ask_for_port()
+    return port
 
-def get_connection_infos():
+def get_connection_infos() -> (str, int):
     ip = input("Server IP:")
-    port = int(input("Port:"))
+    port = ask_for_port()
     return ip, port
 
 
@@ -64,6 +71,7 @@ def main():
             item.close()
             logging.error(f"Connection to remote host was closed")
             exit(1)
+    print('press Enter to quit')
 
 
 if __name__ == '__main__':
