@@ -71,7 +71,7 @@ class Server:
         for new_connection in new_connections:
             self.__accept_new_user(new_connection)
 
-# TODO: We have to find a way to close client's connection and remove it from the client list
+    # TODO: We have to find a way to close client's connection and remove it from the client list
     def run(self) -> None:
         """Server mainloop.
 
@@ -89,6 +89,7 @@ class Server:
 
     def handle_packets(self, user: Session, packet: packet_pb2.defaultPacket):
         try:
+            print(packet)
             resp = self.__command_interpreter.interpret_command(user, packet)
             if resp == CommandResponse.SESSION_CLOSED:
                 self.__remove_user(user)

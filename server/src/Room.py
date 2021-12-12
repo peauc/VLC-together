@@ -21,7 +21,7 @@ class Room:
 
     def send_packet_to_users(self, message):
         for user in self.__users:
-            user.add_to_output_queue(message)
+            user.queue_to_send(message)
 
     def has_user(self, user: Session):
         return user in self.__users

@@ -3,29 +3,23 @@ import socket
 
 class ServerConnection(object):
     @property
-    def socket(self):
-        return self.__socket
-
-    @property
-    def output_queue(self):
-        return self.__output_queue
-
-    @property
-    def should_run(self):
-        return self.__should_run
+    def fileno(self):
+        return self.socket.fileno
 
     def __init__(self, ip, port):
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__socket.connect((ip, port))
-        self.__should_run = True
-        self.__output_queue = []
+        self.output_queue = []
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((ip, port))
+        self.socket.setblocking(False)
+        self.should_run = True
+
+    def stop(self):
+        """Stop the server."""
+        self.should_run = False
 
     def __del__(self):
-        self.__socket.close()
+        self.socket.close()
 
-    def fileno(self):
-        return self.__socket.fileno()
-
-    def add_to_output_queue(self, param):
-        self.__output_queue.append(param)
+    def queue_to_send(self, param):
+        self.output_queue.append(param)
 

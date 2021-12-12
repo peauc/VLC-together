@@ -24,20 +24,17 @@ class UserInputHandler(object):
             self.__reader.command_queue.clear()
         return commands
 
-    """
-        This method will return a list of packets to be sent back to the server 
-    """
-    def poll_and_consume_packets(self) -> [packet_pb2.defaultPacket]:
+    def read_and_serialize_user_input(self) -> [packet_pb2.defaultPacket]:
+        """Return a list of packets to be sent back to the server"""
         packets = []
         if self.__reader.is_data_available():
             commands = self.get_data()
+            logging.debug(commands)
             packets = self.parse_commands(commands)
         return packets
 
-    """
-        This method will send VLC command to VLC and prepare the others to be sent back to the server
-    """
     def parse_commands(self, commands: [str]) -> [packet_pb2.defaultPacket.Commands]:
+        """Send VLC command to VLC and prepare the others to be sent back to the server."""
         packets = []
         for c in commands:
             # If the first character is a forward slash it means the command is to be interpreted by VLC-Together
@@ -51,19 +48,13 @@ class UserInputHandler(object):
         return packets
 
     def consume_commands(self, full_command_line) -> packet_pb2.defaultPacket.Commands or None:
-        # We split the command into two part, in the first, the action, in the second the params
-        command = full_command_line.split(' ', 1)
-        if command[0] in self.__command_list:
-            if len(command) == 1:
-                param = ''
-            else:
-                param = command[1]
-            packet = self.__command_list[command[0]](param)
-            return packet
-        else:
+        # Split into command [...args]
+        command, args = full_command_line.split(' ', 1)
+        if command not in self.__command_list:
             # Todo : Display the list of available commands
             logging.error("Command not recognized")
             return None
+        return self.__command_list[command](args)
 
     def __build_vlc_command(self, vlc_command) -> packet_pb2.defaultPacket:
         packet = packet_pb2.defaultPacket()

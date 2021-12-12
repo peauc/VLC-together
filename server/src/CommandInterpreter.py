@@ -24,7 +24,7 @@ class CommandInterpreter:
 
     @property
     def accepted_commands(self):
-        return [k for k, v in self.__command_list]
+        return [k for k, v in self.__command_list.items()]
 
     def _error(self, user: Session, packet_string: str):
         pass

@@ -1,8 +1,14 @@
 import sys
-from threading import Thread, Lock
+import threading
 
 
-class TerminalAsyncReader(Thread):
+class TerminalAsyncReader(threading.Thread):
+    def __init__(self):
+        super(TerminalAsyncReader, self).__init__()
+        self._lock = threading.Lock()
+        self._command_queue = []
+        self.__should_run = True
+
     @property
     def is_running(self):
         return self.__should_run
@@ -15,21 +21,16 @@ class TerminalAsyncReader(Thread):
     def command_queue(self):
         return self._command_queue
 
-    def __init__(self):
-        super(TerminalAsyncReader, self).__init__()
-        self._lock = Lock()
-        self._command_queue = []
-        self.__should_run = True
-
     def stop(self):
         self.__should_run = False
 
     def run(self):
         while self.__should_run:
-            array = [l for l in sys.stdin.read().splitlines() if l]
-            if array:
-                with self._lock:
-                    self._command_queue += array
+            lines = input().splitlines()
+            if not lines:
+                continue
+            with self._lock:
+                self._command_queue += lines
 
     def is_data_available(self):
         return bool(self._command_queue)
