@@ -6,7 +6,6 @@ class TestRoomHandler(TestCase):
         rh = RoomHandler()
         room = Room()
 
-
     def test_remove_user_from_room(self):
         self.fail()
 
