@@ -1,8 +1,8 @@
-import Common.Network.Protobuff.Generated.packet_pb2 as packet_pb2
-import Common.Utils.network as network_utils
+import common.network.Protobuff.Generated.packet_pb2 as packet_pb2
+import common.utils.network as network_utils
 import logging
 from .RoomHandler import RoomHandler
-from .User import User
+from .Session import Session
 from enum import Enum
 
 
@@ -20,31 +20,33 @@ class CommandInterpreter:
             packet_pb2.defaultPacket.JOIN: self._join,
             packet_pb2.defaultPacket.VLC_COMMAND: self._vlc_command,
             packet_pb2.defaultPacket.QUIT: self._quit
-        }
+            }
 
     @property
     def accepted_commands(self):
         return [k for k, v in self.__command_list]
 
-    def _error(self, user: User, packet_string: str):
+    def _error(self, user: Session, packet_string: str):
         pass
 
-    def _join(self, user: User, packet_string: str):
+    def _join(self, user: Session, packet_string: str):
         split_param = packet_string.split(' ')
         if len(split_param) < 1 or len(split_param) > 2:
             return CommandResponse.PARAM_ERROR, "join parameters error\njoin room_name [room_password]\n"
         self.__room_handler.add_user_to_room(user, *split_param)
-        #TODO: Maybe add a nickname for users
-        room_message = network_utils.create_packet(packet_pb2.defaultPacket.SERVER_INFO, f"A new user {user.sock.getpeername()} has joined")
+        # TODO: Maybe add a nickname for users
+        room_message = network_utils.create_packet(packet_pb2.defaultPacket.SERVER_INFO,
+                                                   f"A new user {user.sock.getpeername()} has joined")
         user.add_to_output_queue(room_message)
         # The room name is guarenteed
         logging.debug(f"User {user} joined the room {split_param[0]}")
         return CommandResponse.OK, ""
 
-    def _quit(self, user: User, packet_string: str):
+    def _quit(self, user: Session, packet_string: str):
         room = self.__room_handler.get_room_from_user(user)
         if room is not None:
-            packet = network_utils.create_packet(packet_pb2.defaultPacket.SERVER_INFO, f"User {user} left with message {packet_string}")
+            packet = network_utils.create_packet(packet_pb2.defaultPacket.SERVER_INFO,
+                                                 f"User {user} left with message {packet_string}")
             room.send_packet_to_users(packet)
         self.remove_user_trace(user)
         logging.debug(f"user {user} is leaving")
@@ -52,7 +54,7 @@ class CommandInterpreter:
         user.sock.close()
         return CommandResponse.SESSION_CLOSED, "Session closed"
 
-    def _vlc_command(self, user: User, packet_string: str):
+    def _vlc_command(self, user: Session, packet_string: str):
         room = self.__room_handler.get_room_from_user(user)
         if room is not None:
             packet = network_utils.create_packet(packet_pb2.defaultPacket.VLC_COMMAND, packet_string)
@@ -60,12 +62,12 @@ class CommandInterpreter:
             room.send_packet_to_users(packet)
         return CommandResponse.OK, ""
 
-    def remove_user_trace(self, user: User):
+    def remove_user_trace(self, user: Session):
         room = self.__room_handler.get_room_from_user(user)
         if room is not None:
             self.__room_handler.remove_user_from_room(user, room)
 
-    def interpret_command(self, user: User, packet: packet_pb2.defaultPacket):
+    def interpret_command(self, user: Session, packet: packet_pb2.defaultPacket):
         descriptor = packet_pb2.defaultPacket.Commands.DESCRIPTOR
 
         if packet.command in descriptor.values_by_number:

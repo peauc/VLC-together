@@ -1,3 +1,3 @@
 #!/bin/bash
 
-protoc -I=../Common/Network/Protobuff/ --python_out=../Common/Network/Protobuff/Generated/ ../Common/Network/Protobuff/packet.proto
+protoc -I=../common/network/Protobuff/ --python_out=../common/network/Protobuff/Generated/ ../common/network/Protobuff/packet.proto

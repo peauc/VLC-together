@@ -1,7 +1,7 @@
 import logging
-from Client import TerminalAsyncReader
-from Common.Utils.packet import create_packet
-import Common.Network.Protobuff.Generated.packet_pb2 as packet_pb2
+from client import TerminalAsyncReader
+from common.utils.packet import create_packet
+import common.network.Protobuff.Generated.packet_pb2 as packet_pb2
 
 
 class UserInputHandler(object):

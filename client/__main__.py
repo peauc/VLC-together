@@ -3,10 +3,10 @@ import logging
 import select
 import os
 import time
-import Common.Network.Protobuff.Generated.packet_pb2 as packet_pb2
-from Client.UserInputHandler import UserInputHandler
-from Client.ServerConnection import ServerConnection
-from Client.vlc import VLC
+import common.network.Protobuff.Generated.packet_pb2 as packet_pb2
+from .UserInputHandler import UserInputHandler
+from .ServerConnection import ServerConnection
+from client.vlc import VLC
 
 
 def setup_logging():

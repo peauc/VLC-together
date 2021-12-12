@@ -1,5 +1,5 @@
-from .User import User
-from Common.Utils.password import validate_password
+from .Session import Session
+from common.utils.password import validate_password
 
 
 class Room:
@@ -11,17 +11,17 @@ class Room:
     def __str__(self):
         return self.__name
 
-    def add_user(self, user: User, password : str):
+    def add_user(self, user: Session, password : str):
         if not validate_password(self.__password, password):
             return
         self.__users.append(user)
 
-    def remove_user(self, user: User):
+    def remove_user(self, user: Session):
         self.__users.remove(user)
 
     def send_packet_to_users(self, message):
         for user in self.__users:
             user.add_to_output_queue(message)
 
-    def has_user(self, user: User):
+    def has_user(self, user: Session):
         return user in self.__users
